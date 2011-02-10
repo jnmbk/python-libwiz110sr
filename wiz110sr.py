@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import socket
+import struct
 import thread
 import time
 
@@ -26,12 +27,41 @@ WIZNET_LOCAL_UDP_PORT = 5001
 WIZNET_SEARCH_COMMAND = "FIND"
 WIZNET_SEARCH_RESPONSE = "IMIN"
 WIZNET_SET_COMMAND = "SET"
+WIZNET_INT_FORMAT = "!H"
 
 class Device:
     data_positions = {
         "mac": (0, 6),
         "op": (6, 7),
         "ip": (7, 11),
+        "subnet_mask": (11, 15),
+        "gateway_ip": (15, 19),
+        "port": (19, 21),
+        "remote_ip": (21, 25),
+        "remote_port": (25, 27),
+        "baud": (27, 28),
+        "d_bit": (28, 29),
+        "p_bit": (29, 30),
+        "s_bit": (30, 31),
+        "flow": (31, 32),
+        "char": (32, 33),
+        "length": (33, 35),
+        "interval": (35, 37),
+        "inactivity": (37, 39),
+        "dbug": (39, 40),
+        "ver": (40, 42),
+        "dhcp": (42, 43),
+        "udp": (43, 44),
+        "conn": (44, 45),
+        "dflg": (45, 46),
+        "dns_ip": (46, 50),
+        "remote_domain": (50, 82),
+        "scfg": (82, 83),
+        "scfg_string": (83, 86),
+        "pppoe_id": (86, 118),
+        "pppoe_pass": (118, 150),
+        "enp": (150, 151),
+        "conn_pass": (151, 159),
     }
     def __init__(self, config_data, real_ip):
         self.config_data = config_data
@@ -78,6 +108,86 @@ class Device:
     def set_ip_address(self, ip):
         "ip is in ddd.ddd.ddd.ddd format"
         self._set_data("ip", "".join(chr(int(i)) for i in ip.split(".")))
+
+    def get_subnet_mask(self):
+        "returns mask in ddd.ddd.ddd.ddd format"
+        return ".".join([str(ord(i)) for i in self._get_data("subnet_mask")])
+
+    def set_subnet_mask(self, mask):
+        "mask is in ddd.ddd.ddd.ddd format"
+        self._set_data("subnet_mask", "".join(chr(int(i)) for i in mask.split(".")))
+
+    def get_gateway_ip(self):
+        "returns ip address in ddd.ddd.ddd.ddd format"
+        return ".".join([str(ord(i)) for i in self._get_data("gateway_ip")])
+
+    def set_gateway_ip(self, ip):
+        "ip is in ddd.ddd.ddd.ddd format"
+        self._set_data("gateway_ip", "".join(chr(int(i)) for i in ip.split(".")))
+
+    def get_port(self):
+        "returns port number which is an unsigned short integer"
+        return struct.unpack(WIZNET_INT_FORMAT, self._get_data("port"))[0]
+
+    def set_port(self, port):
+        "port is an unsigned short integer"
+        self._set_data("port", struct.pack(WIZNET_INT_FORMAT, port))
+
+    def get_remote_ip(self):
+        "returns ip address in ddd.ddd.ddd.ddd format"
+        return ".".join([str(ord(i)) for i in self._get_data("remote_ip")])
+
+    def set_remote_ip(self, ip):
+        "ip is in ddd.ddd.ddd.ddd format"
+        self._set_data("remote_ip", "".join(chr(int(i)) for i in ip.split(".")))
+
+    def get_remote_port(self):
+        "returns port number which is an unsigned short integer"
+        return struct.unpack(WIZNET_INT_FORMAT, self._get_data("remote_port"))[0]
+
+    def set_remote_port(self, port):
+        "port is an unsigned short integer"
+        self._set_data("remote_port", struct.pack(WIZNET_INT_FORMAT, port))
+
+    def get_baud_rate(self):
+        "returns integer which in hex means A0:1200, D0:2400, E8:4800, F4:9600, FA:19200, FD:38400, FE:57600, FF:115200, BB:230400"
+        return ord(self._get_data("baud"))
+
+    def set_baud_rate(self, baud):
+        "baus is an integer which in hex means A0:1200, D0:2400, E8:4800, F4:9600, FA:19200, FD:38400, FE:57600, FF:115200, BB:230400"
+        self._set_data("baud", chr(baud))
+
+    def get_data_bit_length(self):
+        "returns an integer which can be 7 or 8"
+        return ord(self._get_data("d_bit"))
+
+    def set_data_bit_length(self, d_bit):
+        "d_bit is an integer which can be 7 or 8"
+        self._set_data("d_bit", chr(d_bit))
+
+    def get_parity_bit(self):
+        "returns an integer which means 0:None, 1:Odd, 2:Even"
+        return ord(self._get_data("p_bit"))
+
+    def set_parity_bit(self, p_bit):
+        "p_bit is an integer which means 0:None, 1:Odd, 2:Even"
+        self._set_data("p_bit", chr(p_bit))
+
+    def get_stop_bit(self):
+        "returns an integer which can be 0 or 1"
+        return ord(self._get_data("s_bit"))
+
+    def set_stop_bit(self, s_bit):
+        "s_bit is an integer which can be 0 or 1"
+        self._set_data("s_bit", chr(s_bit))
+
+    def get_flow(self):
+        "returns an integer which means 0:None, 1:Xon/Xoff, 2:CTS/RTS"
+        return ord(self._get_data("flow"))
+
+    def set_flow(self, flow):
+        "flow is an integer which means 0:None, 1:Xon/Xoff, 2:CTS/RTS"
+        self._set_data("flow", chr(flow))
 
 class DeviceFinder:
     device_list = []
