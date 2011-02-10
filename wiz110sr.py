@@ -103,6 +103,7 @@ class DeviceFinder:
         self.socket.sendto(WIZNET_SEARCH_COMMAND, ("<broadcast>", WIZNET_REMOTE_UDP_PORT))
 
     def get_device_list(self):
+        "returns a list of devices, you should call search method and wait a few seconds before using this"
         return self.device_list
 
 if __name__ == "__main__":
