@@ -102,11 +102,11 @@ class Device:
         self._set_data("mac", "".join(chr(int(i, 16)) for i in mac.split(":")))
 
     def get_operation_mode(self):
-        #returns 1: client, 2: server, 3:mixed
+        #returns 1:client, 2:server, 3:mixed
         return ord(self._get_data("op"))
 
     def set_operation_mode(self, op):
-        #op is an integer 1: client, 2: server, 3:mixed
+        #op is an integer 1:client, 2:server, 3:mixed
         self._set_data("op", chr(op))
 
     def get_ip_address(self):
@@ -158,11 +158,13 @@ class Device:
         self._set_data("remote_port", struct.pack(WIZNET_INT_FORMAT, port))
 
     def get_baud_rate(self):
-        #returns integer which in hex means A0:1200, D0:2400, E8:4800, F4:9600, FA:19200, FD:38400, FE:57600, FF:115200, BB:230400
+        #returns integer which in hex means:
+        #A0:1200, D0:2400, E8:4800, F4:9600, FA:19200, FD:38400, FE:57600, FF:115200, BB:230400
         return ord(self._get_data("baud"))
 
     def set_baud_rate(self, baud):
-        #baud is an integer which in hex means A0:1200, D0:2400, E8:4800, F4:9600, FA:19200, FD:38400, FE:57600, FF:115200, BB:230400
+        #baud is an integer which in hex means:
+        #A0:1200, D0:2400, E8:4800, F4:9600, FA:19200, FD:38400, FE:57600, FF:115200, BB:230400
         self._set_data("baud", chr(baud))
 
     def get_data_bit_length(self):
@@ -202,7 +204,7 @@ class Device:
         return self._get_data("char")
 
     def set_char(self, char):
-        #char is a character, 0 means packing is not used
+        #char is a character, \0 means packing is not used
         self._set_data("char", char)
 
     def get_length(self):
