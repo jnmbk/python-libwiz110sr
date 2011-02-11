@@ -29,6 +29,7 @@ WIZNET_SEARCH_RESPONSE = "IMIN"
 WIZNET_SET_REQ_COMMAND = "SETT"
 WIZNET_SET_RES_COMMAND = "SETC"
 WIZNET_INT_FORMAT = "!H"
+WIZNET_VERSION_FORMAT = "!BB"
 
 class Device:
     data_positions = {
@@ -196,6 +197,62 @@ class Device:
         #flow is an integer which means 0:None, 1:Xon/Xoff, 2:CTS/RTS
         self._set_data("flow", chr(flow))
 
+    def get_char(self):
+        #returns a character, \0 means packing is not used
+        return self._get_data("char")
+
+    def set_char(self, char):
+        #char is a character, 0 means packing is not used
+        self._set_data("char", char)
+
+    def get_length(self):
+        #returns serial packing length which can be 255 max, 0 means packing is not used
+        return struct.unpack(WIZNET_INT_FORMAT, self._get_data("length"))[0]
+
+    def set_length(self, length):
+        #length can be 255 max, 0 means packing is not used
+        self._set_data("length", struct.pack(WIZNET_INT_FORMAT, length))
+
+    def get_interval(self):
+        #returns serial packing interval which is a short integer, 0 means packing is not used
+        return struct.unpack(WIZNET_INT_FORMAT, self._get_data("interval"))[0]
+
+    def set_interval(self, interval):
+        #interval is a short integer, 0 means packing is not used
+        self._set_data("interval", struct.pack(WIZNET_INT_FORMAT, interval))
+
+    def get_inactivity(self):
+        #returns TCP inactivity time in seconds which is a short integer, 0 means disabled
+        return struct.unpack(WIZNET_INT_FORMAT, self._get_data("inactivity"))[0]
+
+    def set_inactivity(self, inactivity):
+        #TCP inactivity time in seconds is a short integer, 0 means disabled
+        self._set_data("inactivity", struct.pack(WIZNET_INT_FORMAT, inactivity))
+
+    def get_debug(self):
+        #returns an integer which means 0:Enable, 1:Disable
+        return ord(self._get_data("dbug"))
+
+    def set_debug(self, dbug):
+        #dbug is an integer which means 0:Enable, 1:Disable
+        self._set_data("dbug", chr(dbug))
+
+    def get_version(self):
+        #returns version in d.d format
+        return "%d.%d" % struct.unpack(WIZNET_VERSION_FORMAT, self._get_data("ver"))
+
+    def set_version(self, ver):
+        #ver is in d.d format
+        self._set_data("ver", struct.pack(WIZNET_VERSION_FORMAT, *[int(i) for i in ver.split(".")]))
+
+    def get_dhcp(self):
+        #returns an integer which means 0:Static, 1:DHCP, 2:PPPoE
+        return ord(self._get_data("dhcp"))
+
+    def set_dhcp(self, dhcp):
+        #dhcp is an integer which means 0:Static, 1:DHCP, 2:PPPoE
+        self._set_data("dhcp", chr(dhcp))
+
 class DeviceFinder:
     device_list = []
 
@@ -228,3 +285,4 @@ if __name__ == "__main__":
     f.search()
     time.sleep(1)
     print f.get_device_list()
+    time.sleep(2)
