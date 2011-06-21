@@ -81,7 +81,7 @@ class Device:
         self.config_data = "".join(data_list)
 
     def save_config(self):
-        #writes current configuration to device
+        """writes current configuration to device"""
         s = socket.socket()
         s.connect((self.real_ip, WIZNET_REMOTE_TCP_PORT))
         s.send(WIZNET_SET_REQ_COMMAND + self.config_data)
@@ -94,165 +94,165 @@ class Device:
         s.close()
 
     def get_mac_address(self):
-        #returns mac address in XX:XX:XX:XX:XX:XX format
+        """returns mac address in XX:XX:XX:XX:XX:XX format"""
         return ":".join(["%X" % ord(i) if ord(i) > 0xF else "0%X" % ord(i) for i in self._get_data("mac")])
 
     def set_mac_address(self, mac):
-        #sets given mac address in XX:XX:XX:XX:XX:XX format
+        """sets given mac address in XX:XX:XX:XX:XX:XX format"""
         self._set_data("mac", "".join(chr(int(i, 16)) for i in mac.split(":")))
 
     def get_operation_mode(self):
-        #returns 1:client, 2:server, 3:mixed
+        """returns 1:client, 2:server, 3:mixed"""
         return ord(self._get_data("op"))
 
     def set_operation_mode(self, op):
-        #op is an integer 1:client, 2:server, 3:mixed
+        """op is an integer 1:client, 2:server, 3:mixed"""
         self._set_data("op", chr(op))
 
     def get_ip_address(self):
-        #returns ip address in ddd.ddd.ddd.ddd format
+        """returns ip address in ddd.ddd.ddd.ddd format"""
         return ".".join([str(ord(i)) for i in self._get_data("ip")])
 
     def set_ip_address(self, ip):
-        #ip is in ddd.ddd.ddd.ddd format
+        """ip is in ddd.ddd.ddd.ddd format"""
         self._set_data("ip", "".join(chr(int(i)) for i in ip.split(".")))
 
     def get_subnet_mask(self):
-        #returns mask in ddd.ddd.ddd.ddd format
+        """returns mask in ddd.ddd.ddd.ddd format"""
         return ".".join([str(ord(i)) for i in self._get_data("subnet_mask")])
 
     def set_subnet_mask(self, mask):
-        #mask is in ddd.ddd.ddd.ddd format
+        """mask is in ddd.ddd.ddd.ddd format"""
         self._set_data("subnet_mask", "".join(chr(int(i)) for i in mask.split(".")))
 
     def get_gateway_ip(self):
-        #returns ip address in ddd.ddd.ddd.ddd format
+        """returns ip address in ddd.ddd.ddd.ddd format"""
         return ".".join([str(ord(i)) for i in self._get_data("gateway_ip")])
 
     def set_gateway_ip(self, ip):
-        #ip is in ddd.ddd.ddd.ddd format
+        """ip is in ddd.ddd.ddd.ddd format"""
         self._set_data("gateway_ip", "".join(chr(int(i)) for i in ip.split(".")))
 
     def get_port(self):
-        #returns port number which is an unsigned short integer
+        """returns port number which is an unsigned short integer"""
         return struct.unpack(WIZNET_INT_FORMAT, self._get_data("port"))[0]
 
     def set_port(self, port):
-        #port is an unsigned short integer
+        """port is an unsigned short integer"""
         self._set_data("port", struct.pack(WIZNET_INT_FORMAT, port))
 
     def get_remote_ip(self):
-        #returns ip address in ddd.ddd.ddd.ddd format
+        """returns ip address in ddd.ddd.ddd.ddd format"""
         return ".".join([str(ord(i)) for i in self._get_data("remote_ip")])
 
     def set_remote_ip(self, ip):
-        #ip is in ddd.ddd.ddd.ddd format
+        """ip is in ddd.ddd.ddd.ddd format"""
         self._set_data("remote_ip", "".join(chr(int(i)) for i in ip.split(".")))
 
     def get_remote_port(self):
-        #returns port number which is an unsigned short integer
+        """returns port number which is an unsigned short integer"""
         return struct.unpack(WIZNET_INT_FORMAT, self._get_data("remote_port"))[0]
 
     def set_remote_port(self, port):
-        #port is an unsigned short integer
+        """port is an unsigned short integer"""
         self._set_data("remote_port", struct.pack(WIZNET_INT_FORMAT, port))
 
     def get_baud_rate(self):
-        #returns integer which in hex means:
-        #A0:1200, D0:2400, E8:4800, F4:9600, FA:19200, FD:38400, FE:57600, FF:115200, BB:230400
-        return ord(self._get_data("baud"))
+        """returns integer which in hex means:
+        A0:1200, D0:2400, E8:4800, F4:9600, FA:19200, FD:38400, FE:57600, FF:115200, BB:230400
+        return ord(self._get_data("baud"))"""
 
     def set_baud_rate(self, baud):
-        #baud is an integer which in hex means:
-        #A0:1200, D0:2400, E8:4800, F4:9600, FA:19200, FD:38400, FE:57600, FF:115200, BB:230400
+        """baud is an integer which in hex means:
+        A0:1200, D0:2400, E8:4800, F4:9600, FA:19200, FD:38400, FE:57600, FF:115200, BB:230400"""
         self._set_data("baud", chr(baud))
 
     def get_data_bit_length(self):
-        #returns an integer which can be 7 or 8
+        """returns an integer which can be 7 or 8"""
         return ord(self._get_data("d_bit"))
 
     def set_data_bit_length(self, d_bit):
-        #d_bit is an integer which can be 7 or 8
+        """d_bit is an integer which can be 7 or 8"""
         self._set_data("d_bit", chr(d_bit))
 
     def get_parity_bit(self):
-        #returns an integer which means 0:None, 1:Odd, 2:Even
+        """returns an integer which means 0:None, 1:Odd, 2:Even"""
         return ord(self._get_data("p_bit"))
 
     def set_parity_bit(self, p_bit):
-        #p_bit is an integer which means 0:None, 1:Odd, 2:Even
+        """p_bit is an integer which means 0:None, 1:Odd, 2:Even"""
         self._set_data("p_bit", chr(p_bit))
 
     def get_stop_bit(self):
-        #returns an integer which can be 0 or 1
+        """returns an integer which can be 0 or 1"""
         return ord(self._get_data("s_bit"))
 
     def set_stop_bit(self, s_bit):
-        #s_bit is an integer which can be 0 or 1
+        """s_bit is an integer which can be 0 or 1"""
         self._set_data("s_bit", chr(s_bit))
 
     def get_flow(self):
-        #returns an integer which means 0:None, 1:Xon/Xoff, 2:CTS/RTS
+        """returns an integer which means 0:None, 1:Xon/Xoff, 2:CTS/RTS"""
         return ord(self._get_data("flow"))
 
     def set_flow(self, flow):
-        #flow is an integer which means 0:None, 1:Xon/Xoff, 2:CTS/RTS
+        """flow is an integer which means 0:None, 1:Xon/Xoff, 2:CTS/RTS"""
         self._set_data("flow", chr(flow))
 
     def get_char(self):
-        #returns a character, \0 means packing is not used
+        """returns a character, \0 means packing is not used"""
         return self._get_data("char")
 
     def set_char(self, char):
-        #char is a character, \0 means packing is not used
+        """char is a character, \0 means packing is not used"""
         self._set_data("char", char)
 
     def get_length(self):
-        #returns serial packing length which can be 255 max, 0 means packing is not used
+        """returns serial packing length which can be 255 max, 0 means packing is not used"""
         return struct.unpack(WIZNET_INT_FORMAT, self._get_data("length"))[0]
 
     def set_length(self, length):
-        #length can be 255 max, 0 means packing is not used
+        """length can be 255 max, 0 means packing is not used"""
         self._set_data("length", struct.pack(WIZNET_INT_FORMAT, length))
 
     def get_interval(self):
-        #returns serial packing interval which is a short integer, 0 means packing is not used
+        """returns serial packing interval which is a short integer, 0 means packing is not used"""
         return struct.unpack(WIZNET_INT_FORMAT, self._get_data("interval"))[0]
 
     def set_interval(self, interval):
-        #interval is a short integer, 0 means packing is not used
+        """interval is a short integer, 0 means packing is not used"""
         self._set_data("interval", struct.pack(WIZNET_INT_FORMAT, interval))
 
     def get_inactivity(self):
-        #returns TCP inactivity time in seconds which is a short integer, 0 means disabled
+        """returns TCP inactivity time in seconds which is a short integer, 0 means disabled"""
         return struct.unpack(WIZNET_INT_FORMAT, self._get_data("inactivity"))[0]
 
     def set_inactivity(self, inactivity):
-        #TCP inactivity time in seconds is a short integer, 0 means disabled
+        """TCP inactivity time in seconds is a short integer, 0 means disabled"""
         self._set_data("inactivity", struct.pack(WIZNET_INT_FORMAT, inactivity))
 
     def get_debug(self):
-        #returns an integer which means 0:Enable, 1:Disable
+        """returns an integer which means 0:Enable, 1:Disable"""
         return ord(self._get_data("dbug"))
 
     def set_debug(self, dbug):
-        #dbug is an integer which means 0:Enable, 1:Disable
+        """dbug is an integer which means 0:Enable, 1:Disable"""
         self._set_data("dbug", chr(dbug))
 
     def get_version(self):
-        #returns version in d.d format
+        """returns version in d.d format"""
         return "%d.%d" % struct.unpack(WIZNET_VERSION_FORMAT, self._get_data("ver"))
 
     def set_version(self, ver):
-        #ver is in d.d format
+        """ver is in d.d format"""
         self._set_data("ver", struct.pack(WIZNET_VERSION_FORMAT, *[int(i) for i in ver.split(".")]))
 
     def get_dhcp(self):
-        #returns an integer which means 0:Static, 1:DHCP, 2:PPPoE
+        """returns an integer which means 0:Static, 1:DHCP, 2:PPPoE"""
         return ord(self._get_data("dhcp"))
 
     def set_dhcp(self, dhcp):
-        #dhcp is an integer which means 0:Static, 1:DHCP, 2:PPPoE
+        """dhcp is an integer which means 0:Static, 1:DHCP, 2:PPPoE"""
         self._set_data("dhcp", chr(dhcp))
 
 class DeviceFinder:
@@ -274,12 +274,12 @@ class DeviceFinder:
                 self.device_list.append(Device(data[4:], address[0]))
 
     def search(self):
-        #sends a broadcast message to find all wiznet devices on network
+        """sends a broadcast message to find all wiznet devices on network"""
         self.device_list = []
         self.socket.sendto(WIZNET_SEARCH_COMMAND, ("<broadcast>", WIZNET_REMOTE_UDP_PORT))
 
     def get_device_list(self):
-        #returns a list of devices, you should call search method and wait a few seconds before using this
+        """returns a list of devices, you should call search method and wait a few seconds before using this"""
         return self.device_list
 
 if __name__ == "__main__":
