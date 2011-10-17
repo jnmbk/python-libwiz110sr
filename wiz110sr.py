@@ -159,8 +159,8 @@ class Device:
 
     def get_baud_rate(self):
         """returns integer which in hex means:
-        A0:1200, D0:2400, E8:4800, F4:9600, FA:19200, FD:38400, FE:57600, FF:115200, BB:230400
-        return ord(self._get_data("baud"))"""
+        A0:1200, D0:2400, E8:4800, F4:9600, FA:19200, FD:38400, FE:57600, FF:115200, BB:230400"""
+        return hex(ord(self._get_data("baud")))
 
     def set_baud_rate(self, baud):
         """baud is an integer which in hex means:
